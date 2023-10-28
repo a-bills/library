@@ -1,9 +1,58 @@
 body, html {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    min-height: 100%;
 }
 
 *, *::before, *::after {
     box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background-color: #f7f7ff;
+}
+
+header {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    justify-items: center;
+    background-color: #0a014f;
+    color: #f7f7ff;
+}
+
+header > h1 {
+    padding: 1rem;
+}
+
+header > div {
+    display: flex;
+    align-items: center;
+    padding:  0 1rem 1rem;
+    gap: 1rem;
+}
+
+header button {
+    padding: 0.25rem;
+    background-color: #f7f7ff;
+    border: none;
+    border-radius: 4px;
+    color: #0a014f;
+    font-size: 1.125rem;
+}
+
+main {
+    background-color: #6c9a8b; 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1rem;
+    margin: 2rem;
+    padding: 1rem;
+}
+
+main > div {
+    height: 10rem;
+    background-color: #f7f7ff;
 }
