@@ -61,6 +61,10 @@ main {
 
 /* Books */
 
+#hiddenBook {
+    display: none;
+} 
+
 .book {
     height: 10rem;
     background-color: #f7f7ff;
@@ -68,7 +72,10 @@ main {
     display: grid;
     grid-template-columns: auto 1fr 80px;
     gap: 0.5rem;
-    z-index: 2;
+}
+
+.book > * {
+    display: inherit;
 }
 
 .book-icon {

@@ -12,12 +12,12 @@
     <header>
         <h1>Object Library</h1>
         <div>
-            <button>Fill Page</button>
-            <button>New Book</button>
+            <button id="fillPage">Fill Page</button>
+            <button id="newBook">New Book</button>
         </div>
     </header>
     <main>
-        <div id="hiddenBook" class="book">
+        <div id="hiddenBook" class="book" hidden>
 
             <img src="./assets/bookshelf.svg" alt="Book Icon" class="book-icon">
 
@@ -27,7 +27,7 @@
                     <p class="author">by John Smith</p>
                 </div>
                 <div>
-                    <p class="fiction">Fiction Category</p>
+                    <p class="category">Fiction Category</p>
                     <p class="genre">Mystery Genre</p>
                     <p class="pages">1,000 Pages</p>
                 </div>
@@ -40,25 +40,6 @@
             </div>
 
         </div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
     </main>
     <dialog>
         <form action="">
@@ -70,7 +51,7 @@
             <input type="checkbox">
         </form>
     </dialog>
-    <script href="./script.js"></script>
+    <script src="./script.js"></script>
 </body>
 
 </html>
