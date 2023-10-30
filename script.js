@@ -1,7 +1,12 @@
-const fillPageBtn = document.querySelector('#fillPage');
-fillPageBtn.addEventListener('click', () => {
-    displayDefaultLibrary();
-    fillPageBtn.innerText = ''
+const demoBtn = document.querySelector('#demoBtn');
+demoBtn.addEventListener('click', () => {
+    if (demoBtn.innerText === 'Display Demo') {
+        displayDemoLibrary();
+        demoBtn.innerText = 'Remove Demo'
+    } else {
+        removeDemoLibrary();
+        demoBtn.innerText = 'Display Demo'
+    }
 });
 
 function Book(title, author, category, genre, pages, read) {
@@ -16,8 +21,15 @@ Book.prototype.updateReadStatus = function () {
     this.read = (this.read ? false : true);
 }
 
-function displayDefaultLibrary() {
-    const library = generateDefaultLibrary();
+function removeDemoLibrary() {
+    const demoNodes = document.querySelectorAll('.demoBook');
+    [...demoNodes].forEach((node) => {
+        node.parentNode.removeChild(node);
+    });  
+}
+
+function displayDemoLibrary() {
+    const library = generateDemoLibrary();
     const bookTemplate = document.querySelector('#hiddenBook');
     const mainSection = document.querySelector('main');
     for (const book of library) {
@@ -26,13 +38,14 @@ function displayDefaultLibrary() {
     }
 }
 
-function generateDefaultLibrary() {
+function generateDemoLibrary() {
     const library = [];
     let book = {};
     for (let i = 0; i < 21; i++) {
         book = new Book(
             'Fun Book Title', 'John Smith', 'Fiction', 'Sci-Fi', '1000', true
         )
+        book.demo = true;
         library.push(book);
     }
     return library;
@@ -41,6 +54,7 @@ function generateDefaultLibrary() {
 function generateBookNode(book, hiddenBookTemplate) {
     const bookNode = hiddenBookTemplate.cloneNode(true);
     bookNode.removeAttribute('id');
+    bookNode.classList.add('demoBook');
 
     for (const property in book) {
 
@@ -70,9 +84,7 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function removeDefaultLibrary() {
 
-}
 
 function displayNewBook() {
 
