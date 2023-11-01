@@ -9,6 +9,16 @@ demoBtn.addEventListener('click', () => {
     }
 });
 
+function activateBtns(library) {
+    const readBtns = document.querySelectorAll('.read');
+    readBtns.forEach(btn => btn.addEventListener('click', () => {
+        const book = btn.closest('.book');
+        const index = book.getAttribute('data-index');
+        library[index].updateReadStatus(btn);
+    }));
+}
+
+
 function Book(title, author, category, genre, pages, read) {
     this.title = title;
     this.author = author;
@@ -17,25 +27,33 @@ function Book(title, author, category, genre, pages, read) {
     this.pages = pages;
     this.read = read;
 }
-Book.prototype.updateReadStatus = function () {
-    this.read = (this.read ? false : true);
+Book.prototype.updateReadStatus = function (readBtn) {
+    if (this.read) {
+        readBtn.setAttribute('src', './assets/book-remove.svg');
+        this.read = false;
+    } else {
+        readBtn.setAttribute('src', './assets/book-check.svg');
+        this.read = true;
+    }
 }
 
 function removeDemoLibrary() {
     const demoNodes = document.querySelectorAll('.demoBook');
     [...demoNodes].forEach((node) => {
         node.parentNode.removeChild(node);
-    });  
+    });
 }
 
 function displayDemoLibrary() {
     const library = generateDemoLibrary();
     const bookTemplate = document.querySelector('#hiddenBook');
     const mainSection = document.querySelector('main');
-    for (const book of library) {
+    library.forEach((book, index) => {
         const bookNode = generateBookNode(book, bookTemplate);
+        bookNode.setAttribute('data-index', index);
         mainSection.insertBefore(bookNode, bookTemplate);
-    }
+    });
+    activateBtns(library);
 }
 
 function generateDemoLibrary() {
@@ -84,10 +102,8 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-
-
 function displayNewBook() {
-
+    //requires dialog w/ form
 }
 
 function removeBook() {
