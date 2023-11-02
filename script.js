@@ -1,23 +1,47 @@
-const demoBtn = document.querySelector('#demoBtn');
-demoBtn.addEventListener('click', () => {
-    if (demoBtn.innerText === 'Display Demo') {
-        displayDemoLibrary();
-        demoBtn.innerText = 'Remove Demo'
-    } else {
-        removeDemoLibrary();
-        demoBtn.innerText = 'Display Demo'
-    }
-});
+const headerBtns = (function () {
+    const demoBtn = document.querySelector('#demoBtn');
+    demoBtn.addEventListener('click', () => {
+        if (demoBtn.innerText === 'Display Demo') {
+            displayDemoLibrary();
+            demoBtn.innerText = 'Remove Demo'
+        } else {
+            removeDemoLibrary();
+            demoBtn.innerText = 'Display Demo'
+        }
+    });
 
-function activateBtns(library) {
+    const newBookBtn = document.querySelector('#newBook');
+    const dialog = document.querySelector('dialog');
+    newBookBtn.addEventListener('click', () => {
+        dialog.showModal();
+    });
+    
+    //To be removed after editing HTML/CSS
+    dialog.showModal();
+})();
+
+const formBtns = (function () {
+    //form.addEventListener('submit', (e)=> {
+   // e.preventDefault();
+
+})();
+
+function activateBookBtns(library) {
+
     const readBtns = document.querySelectorAll('.read');
     readBtns.forEach(btn => btn.addEventListener('click', () => {
         const book = btn.closest('.book');
         const index = book.getAttribute('data-index');
         library[index].updateReadStatus(btn);
     }));
-}
 
+    const removeBtns = document.querySelectorAll('.remove-book');
+    removeBtns.forEach(btn => btn.addEventListener('click', () => {
+        const book = btn.closest('.book');
+        const index = book.getAttribute('data-index');
+        library[index].removeBook(btn);
+    }));
+}
 
 function Book(title, author, category, genre, pages, read) {
     this.title = title;
@@ -27,7 +51,15 @@ function Book(title, author, category, genre, pages, read) {
     this.pages = pages;
     this.read = read;
 }
+
 Book.prototype.updateReadStatus = function (readBtn) {
+    // To animate the icon change, I could use setTimeout() on the 
+    // setAttribute() methods below
+    // Then add/remove the animation class in CSS w/ a transition within
+    // that timeout window
+    // Or have the attribute change at the height of the animation 
+    // I.e., have the setTimeout() end at the height of the animation
+    
     if (this.read) {
         readBtn.setAttribute('src', './assets/book-remove.svg');
         this.read = false;
@@ -35,6 +67,10 @@ Book.prototype.updateReadStatus = function (readBtn) {
         readBtn.setAttribute('src', './assets/book-check.svg');
         this.read = true;
     }
+}
+
+Book.prototype.removeBook = function () {
+
 }
 
 function removeDemoLibrary() {
@@ -53,7 +89,7 @@ function displayDemoLibrary() {
         bookNode.setAttribute('data-index', index);
         mainSection.insertBefore(bookNode, bookTemplate);
     });
-    activateBtns(library);
+    activateBookBtns(library);
 }
 
 function generateDemoLibrary() {
@@ -94,19 +130,15 @@ function generateBookNode(book, hiddenBookTemplate) {
                 break;
         }
     }
-
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     return bookNode;
-}
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function displayNewBook() {
     //requires dialog w/ form
 }
 
-function removeBook() {
 
-}
 
