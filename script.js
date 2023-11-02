@@ -1,4 +1,25 @@
-const headerBtns = (function () {
+function Book(title, author, category, genre, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.category = category;
+    this.genre = genre;
+    this.pages = pages;
+    this.read = read;
+}
+Book.prototype.updateReadStatus = function (readBtn) {
+    if (this.read) {
+        readBtn.setAttribute('src', './assets/book-remove.svg');
+        this.read = false;
+    } else {
+        readBtn.setAttribute('src', './assets/book-check.svg');
+        this.read = true;
+    }
+}
+Book.prototype.removeBook = function () {
+
+}
+
+const buttons = (function () {
     const demoBtn = document.querySelector('#demoBtn');
     demoBtn.addEventListener('click', () => {
         if (demoBtn.innerText === 'Display Demo') {
@@ -15,62 +36,77 @@ const headerBtns = (function () {
     newBookBtn.addEventListener('click', () => {
         dialog.showModal();
     });
-    
-    //To be removed after editing HTML/CSS
-    dialog.showModal();
-})();
 
-const formBtns = (function () {
-    //form.addEventListener('submit', (e)=> {
-   // e.preventDefault();
+    const closeFormBtn = document.querySelector('#form-container > img');
+    closeFormBtn.addEventListener('click', () => {
+
+    });
 
 })();
 
-function activateBookBtns(library) {
+const processForm = (function () {
+    const form = document.querySelector('form');
+    const formInput = document.querySelectorAll('input, select');
+    const dialog = document.querySelector('dialog');
+    const mainLibrary = [];
 
-    const readBtns = document.querySelectorAll('.read');
-    readBtns.forEach(btn => btn.addEventListener('click', () => {
-        const book = btn.closest('.book');
-        const index = book.getAttribute('data-index');
-        library[index].updateReadStatus(btn);
-    }));
 
-    const removeBtns = document.querySelectorAll('.remove-book');
-    removeBtns.forEach(btn => btn.addEventListener('click', () => {
-        const book = btn.closest('.book');
-        const index = book.getAttribute('data-index');
-        library[index].removeBook(btn);
-    }));
-}
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        dialog.close();
+        const inputValues = [];
 
-function Book(title, author, category, genre, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.category = category;
-    this.genre = genre;
-    this.pages = pages;
-    this.read = read;
-}
+        [...formInput].forEach(node => {
+            inputValues.push(node.value);
+            node.value = '';
+        });
 
-Book.prototype.updateReadStatus = function (readBtn) {
-    // To animate the icon change, I could use setTimeout() on the 
-    // setAttribute() methods below
-    // Then add/remove the animation class in CSS w/ a transition within
-    // that timeout window
-    // Or have the attribute change at the height of the animation 
-    // I.e., have the setTimeout() end at the height of the animation
+        const book = new Book(...inputValues);
+        mainLibrary.push(book);
+        displayUpdatedLibrary(mainLibrary);
+        activateBookBtns(mainLibrary);
+    });
+})();
+
+function displayUpdatedLibrary(mainLibrary) {
+    const bookTemplate = document.querySelector('#hiddenBook');
+    const index = mainLibrary.length - 1;
+    const book = mainLibrary[index];
+    const bookNode = generateBookNode(book, bookTemplate);
+    const mainSection = document.querySelector('main');
+    const readBtn = bookNode.querySelector('.read');
     
-    if (this.read) {
-        readBtn.setAttribute('src', './assets/book-remove.svg');
-        this.read = false;
-    } else {
-        readBtn.setAttribute('src', './assets/book-check.svg');
-        this.read = true;
+    bookNode.setAttribute('data-index', index);
+    bookNode.classList.add('userBook');
+    book.updateReadStatus(readBtn);
+
+    mainSection.appendChild(bookNode, bookTemplate);
+}
+
+function displayDemoLibrary() {
+    const demoLibrary = generateDemoLibrary();
+    const bookTemplate = document.querySelector('#hiddenBook');
+    const mainSection = document.querySelector('main');
+    demoLibrary.forEach((book, index) => {
+        const bookNode = generateBookNode(book, bookTemplate);
+        bookNode.setAttribute('data-index', index);
+        bookNode.classList.add('demoBook');
+        mainSection.insertBefore(bookNode, bookTemplate);
+    });
+    activateBookBtns(demoLibrary);
+}
+
+function generateDemoLibrary() {
+    const demoLibrary = [];
+    let book = {};
+    for (let i = 0; i < 21; i++) {
+        book = new Book(
+            'Fun Book Title', 'John Smith', 'Fiction', 'Sci-Fi', '1000', true
+        )
+        book.demo = true;
+        demoLibrary.push(book);
     }
-}
-
-Book.prototype.removeBook = function () {
-
+    return demoLibrary;
 }
 
 function removeDemoLibrary() {
@@ -80,35 +116,9 @@ function removeDemoLibrary() {
     });
 }
 
-function displayDemoLibrary() {
-    const library = generateDemoLibrary();
-    const bookTemplate = document.querySelector('#hiddenBook');
-    const mainSection = document.querySelector('main');
-    library.forEach((book, index) => {
-        const bookNode = generateBookNode(book, bookTemplate);
-        bookNode.setAttribute('data-index', index);
-        mainSection.insertBefore(bookNode, bookTemplate);
-    });
-    activateBookBtns(library);
-}
-
-function generateDemoLibrary() {
-    const library = [];
-    let book = {};
-    for (let i = 0; i < 21; i++) {
-        book = new Book(
-            'Fun Book Title', 'John Smith', 'Fiction', 'Sci-Fi', '1000', true
-        )
-        book.demo = true;
-        library.push(book);
-    }
-    return library;
-}
-
 function generateBookNode(book, hiddenBookTemplate) {
     const bookNode = hiddenBookTemplate.cloneNode(true);
     bookNode.removeAttribute('id');
-    bookNode.classList.add('demoBook');
 
     for (const property in book) {
 
@@ -136,8 +146,21 @@ function generateBookNode(book, hiddenBookTemplate) {
     return bookNode;
 }
 
-function displayNewBook() {
-    //requires dialog w/ form
+function activateBookBtns(library) {
+
+    const readBtns = document.querySelectorAll('.read');
+    readBtns.forEach(btn => btn.addEventListener('click', () => {
+        const book = btn.closest('.book');
+        const index = book.getAttribute('data-index');
+        library[index].updateReadStatus(btn);
+    }));
+
+    const removeBtns = document.querySelectorAll('.remove-book');
+    removeBtns.forEach(btn => btn.addEventListener('click', () => {
+        const book = btn.closest('.book');
+        const index = book.getAttribute('data-index');
+        library[index].removeBook(btn);
+    }));
 }
 
 
