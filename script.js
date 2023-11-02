@@ -6,18 +6,6 @@ function Book(title, author, category, genre, pages, read) {
     this.pages = pages;
     this.read = read;
 }
-Book.prototype.updateReadStatus = function (readBtn) {
-    if (this.read) {
-        readBtn.setAttribute('src', './assets/book-remove.svg');
-        this.read = false;
-    } else {
-        readBtn.setAttribute('src', './assets/book-check.svg');
-        this.read = true;
-    }
-}
-Book.prototype.removeBook = function () {
-
-}
 
 const buttons = (function () {
     const demoBtn = document.querySelector('#demoBtn');
@@ -39,7 +27,7 @@ const buttons = (function () {
 
     const closeFormBtn = document.querySelector('#form-container > img');
     closeFormBtn.addEventListener('click', () => {
-
+        dialog.close();
     });
 
 })();
@@ -64,7 +52,7 @@ const processForm = (function () {
         const book = new Book(...inputValues);
         mainLibrary.push(book);
         displayUpdatedLibrary(mainLibrary);
-        activateBookBtns(mainLibrary);
+        console.dir(mainLibrary);
     });
 })();
 
@@ -75,12 +63,14 @@ function displayUpdatedLibrary(mainLibrary) {
     const bookNode = generateBookNode(book, bookTemplate);
     const mainSection = document.querySelector('main');
     const readBtn = bookNode.querySelector('.read');
-    
+
     bookNode.setAttribute('data-index', index);
     bookNode.classList.add('userBook');
     book.updateReadStatus(readBtn);
 
     mainSection.appendChild(bookNode, bookTemplate);
+
+    activateUserBookBtns(mainLibrary, bookNode);
 }
 
 function displayDemoLibrary() {
@@ -93,7 +83,7 @@ function displayDemoLibrary() {
         bookNode.classList.add('demoBook');
         mainSection.insertBefore(bookNode, bookTemplate);
     });
-    activateBookBtns(demoLibrary);
+    activateDemoBookBtns(demoLibrary);
 }
 
 function generateDemoLibrary() {
@@ -146,22 +136,72 @@ function generateBookNode(book, hiddenBookTemplate) {
     return bookNode;
 }
 
-function activateBookBtns(library) {
+function activateUserBookBtns(mainLibrary, bookNode) {
+
+    const readBtn = bookNode.querySelector('.read');
+    const removeBtn = bookNode.querySelector('.remove-book');
+
+
+    readBtn.addEventListener('click', (btn) => {
+        const clickedBookNode = btn.target.closest('.book');
+        const index = clickedBookNode.getAttribute('data-index');
+        mainLibrary[index].updateReadStatus(btn);
+    });
+
+    removeBtn.addEventListener('click', (btn) => {
+        const clickedBookNode = btn.target.closest('.book');
+        const index = clickedBookNode.getAttribute('data-index');
+        clickedBookNode.remove();
+        mainLibrary.splice(index, 1);
+        console.dir(mainLibrary);
+        const bookNodeList = document.querySelectorAll('.userBook');
+        for (let i=0; i < mainLibrary.length; i++) {
+            [...bookNodeList].forEach(node => {
+                node.setAttribute('data-index', i);
+            });
+        }
+
+    });
+}
+
+function activateDemoBookBtns(demoLibrary) {
 
     const readBtns = document.querySelectorAll('.read');
     readBtns.forEach(btn => btn.addEventListener('click', () => {
-        const book = btn.closest('.book');
-        const index = book.getAttribute('data-index');
-        library[index].updateReadStatus(btn);
+        const bookNode = btn.closest('.book');
+        const index = bookNode.getAttribute('data-index');
+        demoLibrary[index].updateReadStatus(btn);
     }));
 
     const removeBtns = document.querySelectorAll('.remove-book');
     removeBtns.forEach(btn => btn.addEventListener('click', () => {
-        const book = btn.closest('.book');
-        const index = book.getAttribute('data-index');
-        library[index].removeBook(btn);
+        const bookNode = btn.closest('.book');
+        const index = bookNode.getAttribute('data-index');
+
+        bookNode.remove();
+        demoLibrary.splice(index, 1);
+        console.dir(demoLibrary);
+
+        const bookNodeList = document.querySelectorAll('.demoBook');
+        for (let i=0; i < demoLibrary.length; i++) {
+            [...bookNodeList].forEach(node => {
+                node.setAttribute('data-index', i);
+            });
+        }
     }));
 }
+
+Book.prototype.updateReadStatus = function (readBtn) {
+    if (this.read) {
+        readBtn.setAttribute('src', './assets/book-remove.svg');
+        this.read = false;
+    } else {
+        readBtn.setAttribute('src', './assets/book-check.svg');
+        this.read = true;
+    }
+}
+
+
 
 
 
