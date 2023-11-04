@@ -49,24 +49,24 @@ const processForm = (function () {
             node.value = '';
         });
 
-        const book = new Book(...inputValues);
-        mainLibrary.push(book);
-        displayUpdatedLibrary(mainLibrary);
+        const bookObj = new Book(...inputValues);
+        mainLibrary.push(bookObj);
+        displayMainLibrary(mainLibrary);
         console.dir(mainLibrary);
     });
 })();
 
-function displayUpdatedLibrary(mainLibrary) {
+function displayMainLibrary(mainLibrary) {
     const bookTemplate = document.querySelector('#hiddenBook');
     const index = mainLibrary.length - 1;
-    const book = mainLibrary[index];
-    const bookNode = generateBookNode(book, bookTemplate);
+    const bookObj = mainLibrary[index];
+    const bookNode = generateBookNode(bookObj, bookTemplate);
     const mainSection = document.querySelector('main');
     const readBtn = bookNode.querySelector('.read');
 
     bookNode.setAttribute('data-index', index);
     bookNode.classList.add('userBook');
-    book.updateReadStatus(readBtn);
+    bookObj.updateReadStatus(readBtn);
 
     mainSection.appendChild(bookNode, bookTemplate);
 
@@ -77,8 +77,8 @@ function displayDemoLibrary() {
     const demoLibrary = generateDemoLibrary();
     const bookTemplate = document.querySelector('#hiddenBook');
     const mainSection = document.querySelector('main');
-    demoLibrary.forEach((book, index) => {
-        const bookNode = generateBookNode(book, bookTemplate);
+    demoLibrary.forEach((bookObj, index) => {
+        const bookNode = generateBookNode(bookObj, bookTemplate);
         bookNode.setAttribute('data-index', index);
         bookNode.classList.add('demoBook');
         mainSection.insertBefore(bookNode, bookTemplate);
@@ -88,13 +88,12 @@ function displayDemoLibrary() {
 
 function generateDemoLibrary() {
     const demoLibrary = [];
-    let book = {};
+    let bookObj = {};
     for (let i = 0; i < 21; i++) {
-        book = new Book(
+        bookObj = new Book(
             'Fun Book Title', 'John Smith', 'Fiction', 'Sci-Fi', '1000', true
         )
-        book.demo = true;
-        demoLibrary.push(book);
+        demoLibrary.push(bookObj);
     }
     return demoLibrary;
 }
@@ -106,27 +105,27 @@ function removeDemoLibrary() {
     });
 }
 
-function generateBookNode(book, hiddenBookTemplate) {
+function generateBookNode(bookObj, hiddenBookTemplate) {
     const bookNode = hiddenBookTemplate.cloneNode(true);
     bookNode.removeAttribute('id');
 
-    for (const property in book) {
+    for (const property in bookObj) {
 
         switch (property) {
             case ('title'):
                 bookNode.querySelector('.title').innerText =
-                    book[property];
+                    bookObj[property];
                 break;
             case ('author'):
                 bookNode.querySelector('.author').innerText =
-                    `by ${book[property]}`;
+                    `by ${bookObj[property]}`;
                 break;
             case ('category'): case ('genre'): case ('pages'):
                 bookNode.querySelector(`.${property}`).innerText =
-                    `${capitalizeFirstLetter(property)}: ${book[property]}`;
+                    `${capitalizeFirstLetter(property)}: ${bookObj[property]}`;
                 break;
             case ('read'):
-                bookNode.querySelector(`.${property}`).setAttribute('data-read', book[property]);
+                bookNode.querySelector(`.${property}`).setAttribute('data-read', bookObj[property]);
                 break;
         }
     }
@@ -145,7 +144,7 @@ function activateUserBookBtns(mainLibrary, bookNode) {
     readBtn.addEventListener('click', (btn) => {
         const clickedBookNode = btn.target.closest('.book');
         const index = clickedBookNode.getAttribute('data-index');
-        mainLibrary[index].updateReadStatus(btn);
+        mainLibrary[index].updateReadStatus(readBtn);
     });
 
     removeBtn.addEventListener('click', (btn) => {
@@ -170,7 +169,7 @@ function activateDemoBookBtns(demoLibrary) {
     readBtns.forEach(btn => btn.addEventListener('click', () => {
         const bookNode = btn.closest('.book');
         const index = bookNode.getAttribute('data-index');
-        demoLibrary[index].updateReadStatus(btn);
+        demoLibrary[index].updateReadStatus(clickedBookNode);
     }));
 
     const removeBtns = document.querySelectorAll('.remove-book');
